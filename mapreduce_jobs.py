@@ -5,8 +5,6 @@ This module provides specific MapReduce jobs for analyzing flight data.
 """
 from typing import Dict, List, Any, Tuple, Iterable
 import logging
-from datetime import datetime
-from collections import defaultdict
 
 from mapreduce_framework import Mapper, Reducer, K, V, R
 

@@ -155,3 +155,28 @@ class MapReduceFramework:
                 break
             except Exception as e:
                 logger.error(f"Error in reducer: {e}")
+
+    def _shuffle(self) -> None:
+        """
+        Perform the shuffle operation by grouping key-value pairs.
+        """
+        logger.info("Performing shuffle operation")
+        for key, values in self.shuffle_dict.items():
+            self.reduce_queue.put((key, values))
+
+    def _reduce_worker(self, reducer: Reducer) -> None:
+        """
+        Worker function for reducer threads.
+        :param reducer: The reducer implementation to use.
+        """
+        while not self.reduce_queue.empty():
+            try:
+                key, values = self.reduce_queue.get(block=False)
+                for result in reducer.reduce(key, values):
+                    with self.results_lock:
+                        self.results.append(result)
+                self.reduce_queue.task_done()
+            except queue.Empty:
+                break
+            except Exception as e:
+                logger.error(f"Error in reducer: {e}")

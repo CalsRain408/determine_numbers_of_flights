@@ -141,7 +141,7 @@ def run_job(framework: MapReduceFramework, job_name: str, input_data: List[Tuple
     results = framework.run(input_data, mapper, reducer)
 
     elapsed_time = time.time() - start_time
-    logger.info(f"{job_name} job completed in {elapsed_time:.2f} seconds")
+    logger.info(f"{job_name} job completed in {elapsed_time:.6f} seconds")
 
     print_results(job_name, results, top_n)
     export_results(job_name, results, output_dir)

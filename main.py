@@ -65,12 +65,22 @@ def print_results(job_name: str, results: List[Any], top_n: int = 10) -> None:
         sorted_results = sorted(results, key=lambda x : x[1], reverse=True)
 
         print(f"Top {top_n} Most Frequent Flyers:")
-        print(f"{'Rank':6} {'Passenger ID':15} {'Flight Count':12}")
-        print("-" * 36)
+        print(f"{'Passenger ID':15} {'Flight Count':12}")
+        print("-" * 30)
 
-        # Show the top N passengers
-        for i, (passenger_id, flight_count) in enumerate(sorted_results[:top_n]):
-            print(f"{i + 1:6} {passenger_id:15} {flight_count:12}")
+        # Find the maximum flight count
+        max_flights = sorted_results[0][1] if sorted_results else 0
+
+        # Print all passengers with the maximum flight count
+        for passenger_id, flight_count in sorted_results:
+            if flight_count == max_flights:
+                print(f"{passenger_id:15} {flight_count:12}")
+            elif flight_count < max_flights:
+                # Show the rest of the top n
+                top_n = top_n - 1 if top_n > 0 else 0
+                if top_n > 0:
+                    max_flights = flight_count
+                    print(f"{passenger_id:15} {flight_count:12}")
 
         # Count total passengers
         total_passengers = len(results)
@@ -95,10 +105,12 @@ def export_results(job_name: str, results: List[Any], output_dir: str) -> None:
     filename = job_name.lower().replace(' ', '_') + '.json'
     filepath = os.path.join(output_dir, filename)
 
+    sorted_results = sorted(results, key=lambda x: x[1], reverse=True)
+
     # Convert results to a more JSON-friendly format
     json_results = []
 
-    for key, value in results:
+    for key, value in sorted_results:
         if isinstance(key, tuple):
             result = {'key': list(key), 'value': value}
         else:
@@ -140,13 +152,13 @@ def main():
     Main function to run the MapReduce analysis.
     """
     parser = argparse.ArgumentParser(description='MapReduce Flight Data Analysis')
-    parser.add_argument('--passenger-file', default='', required=True, help='Path to passenger data file')
-    parser.add_argument('--airport-file', default='', required=True, help='Path to airport data file')
-    parser.add_argument('--output-dir', default='./results', help='Directory to save results')
+    parser.add_argument('--passenger-file', default='./data/AComp_Passenger_data_no_error.csv', help='Path to passenger data file')
+    parser.add_argument('--airport-file', default='./data/Top30_airports_LatLong.csv', help='Path to airport data file')
+    parser.add_argument('--output-dir', default='./result', help='Directory to save results')
     parser.add_argument('--mappers', type=int, default=4, help='Number of mapper threads')
     parser.add_argument('--reducers', type=int, default=2, help='Number of reducer threads')
     parser.add_argument('--job', default='frequent', help='Job to run')
-    parser.add_argument('--top-n', type=int, default=1, help='Number of top results to display (default: 1)')
+    parser.add_argument('--top-n', type=int, default=2, help='Number of top results to display (default: 1)')
 
     args = parser.parse_args()
 

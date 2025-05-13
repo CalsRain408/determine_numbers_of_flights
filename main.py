@@ -3,7 +3,7 @@ Main Application for MapReduce Flight Data Analysis
 
 This script runs the MapReduce jobs to analyze flight data
 
-Show the top n most frequent flyers
+- Show the top n most frequent flyers
 """
 import argparse
 import logging

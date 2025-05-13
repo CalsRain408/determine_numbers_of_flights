@@ -9,7 +9,6 @@ import time
 import json
 from typing import Dict, List, Any, Tuple
 import os
-from collections import defaultdict
 
 from mapreduce_framework import MapReduceFramework
 from data_parsers import PassengerDataParser, AirportDataParser
